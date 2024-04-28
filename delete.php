@@ -1,52 +1,42 @@
 <?php
-    // Database connection parameters
-    $servername = 'localhost';  
-    $dbname = 'project';    
-    $username = 'root';
-    $password = ''; 
+// Database connection parameters
+$servername = 'localhost';  
+$dbname = 'memoirsstudio';    
+$username = 'root';
+$password = ''; 
 
-    // Create connection
-    $connection = new mysqli($servername, $username, $password, $dbname);
+// Create connection
+$connection = new mysqli($servername, $username, $password, $dbname);
 
-    // Check connection
-    if ($connection->connect_error) {
-        die("Connection failed: " . $connection->connect_error);
-    }
+// Check connection
+if ($connection->connect_error) {
+    die("Connection failed: " . $connection->connect_error);
+}
 
-    // Retrieve values from the URL
-    $name = $_GET['name'] ?? '';
-    $address = $_GET['address'] ?? '';
-    $contact = $_GET['contact'] ?? '';
-    $date = $_GET['date'] ?? '';
-    $time = $_GET['time'] ?? '';
-    $services = $_GET['services'] ?? '';
+// Retrieve id from the URL
+$id = $_GET['id'] ?? ''; // Retrieve the id parameter
 
-    // Construct the SQL DELETE query using prepared statement
-    $sql = "DELETE FROM booking WHERE 
-            `Name` = ? AND 
-            `Address` = ? AND 
-            `Contact Number` = ? AND  
-            `Date of Reservation` = ? AND 
-            `Time of Reservation` = ? AND 
-            `Select Services` = ?";
+// Construct the SQL DELETE query using prepared statement
+$sql = "DELETE FROM booking WHERE `id` = ?";
 
-    // Prepare SQL statement
-    $stmt = $connection->prepare($sql);
-    if (!$stmt) {
-        die('MySQL prepare error: ' . $connection->error);
-    }
+// Prepare SQL statement
+$stmt = $connection->prepare($sql);
+if (!$stmt) {
+    die('MySQL prepare error: ' . $connection->error);
+}
 
-    // Bind parameters to the prepared statement as strings
-    $stmt->bind_param('ssssss', $name, $address, $contact, $date, $time, $services);
+// Bind id parameter to the prepared statement as an integer
+$stmt->bind_param('i', $id); // 'i' for integer, assuming id is an integer
 
-    // Execute the query
-    if ($stmt->execute()) {
-        header("Location:view.php");
-    } else {
-        echo "Error deleting record: " . $stmt->error;
-    }
+// Execute the query
+if ($stmt->execute()) {
+    // Redirect back to the view page after successful deletion
+    header("Location: view.php");
+} else {
+    echo "Error deleting record: " . $stmt->error;
+}
 
-    // Close statement and connection
-    $stmt->close();
-    $connection->close();
+// Close statement and connection
+$stmt->close();
+$connection->close();
 ?>

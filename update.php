@@ -1,46 +1,49 @@
 <?php
+// Database connection parameters
 $servername = 'localhost';
+$dbname = 'memoirsstudio';
 $username = 'root';
 $password = '';
-$dbname = 'project';
 
-
+// Create connection
 $connection = new mysqli($servername, $username, $password, $dbname);
 
-
+// Check connection
 if ($connection->connect_error) {
     die("Connection failed: " . $connection->connect_error);
 }
 
-// Retrieve POST data
-$name = isset($_POST['name']) ? $_POST['name'] : '';
-$address = isset($_POST['address']) ? $_POST['address'] : '';
-$contact = isset($_POST['contact']) ? $_POST['contact'] : ''; 
-$date = isset($_POST['date']) ? $_POST['date'] : '';
-$time = isset($_POST['time']) ? $_POST['time'] : '';
-$services = isset($_POST['services']) ? $_POST['services'] : '';
+// Check if the form was submitted
+if ($_SERVER["REQUEST_METHOD"] == "POST") {
+    // Retrieve form data
+    $id = $_POST['id'];
+    $name = $_POST['name'];
+    $address = $_POST['address'];
+    $contact = $_POST['contact'];
+    $date = $_POST['date'];
+    $time = $_POST['time'];
+    $services = $_POST['services'];
 
-// Prepare an SQL statement to avoid SQL injection
-$sql = "UPDATE booking SET `Name`=?, `Address`=?, `Contact Number`=?, `Date of Reservation`=?, `Time of Reservation`=?, `Select Services`=? WHERE `Name`=?";
-$stmt = $connection->prepare($sql);
+    // Update the booking in the database
+    $sql = "UPDATE booking SET `Name`=?, `Address`=?, `Contact Number`=?, `Date of Reservation`=?, `Time of Reservation`=?, `Select Services`=? WHERE id=?";
+    $stmt = $connection->prepare($sql);
 
-// Check if the statement was prepared correctly
-if (!$stmt) {
-    die("MySQL prepare error: " . $connection->error);
+    if ($stmt === false) {
+        die("Error preparing statement: " . $connection->error);
+    }
+
+    // Bind parameters and execute the statement
+    $stmt->bind_param("ssssssi", $name, $address, $contact, $date, $time, $services, $id);
+    if ($stmt->execute()) {
+        echo "Booking updated successfully!";
+    } else {
+        echo "Error updating booking: " . $stmt->error;
+    }
+
+    // Close statement
+    $stmt->close();
 }
 
-// Bind parameters to the prepared statement
-$stmt->bind_param("sssssss", $name, $address, $contact, $date, $time, $services, $name);
-
-// Execute the prepared statement
-if ($stmt->execute()) {
-    header("Location:view.php");
-    exit();
-} else {
-    echo "Error updating record: " . $stmt->error;
-}
-
-// Close statement and connection
-$stmt->close();
+// Close connection
 $connection->close();
 ?>

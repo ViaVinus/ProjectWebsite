@@ -1,15 +1,7 @@
-* {
-    margin: 0;
-    padding: 0;
-    box-sizing: border-box;
-         
-}
-
 body {
     font-family: Arial, sans-serif;
-    background-color: #E1F0DA;
-    background-image: url(green1.jpg);
-}
+    background-image: url(../images/green1.jpg);
+   }
 
 header { 
     background-color: #4F6F52;

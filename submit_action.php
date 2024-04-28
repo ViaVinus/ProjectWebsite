@@ -4,14 +4,14 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     // Validate and sanitize user input
     $name = htmlspecialchars($_POST["name"]);
     $address = htmlspecialchars($_POST["address"]);
-    $contact = htmlspecialchars($_POST["contact"]); 
+    $contact = htmlspecialchars($_POST["number"]); 
     $date = htmlspecialchars($_POST["date"]);
     $time = htmlspecialchars($_POST["time"]);
-    $selectedServices = isset($_POST["services"]) ? htmlspecialchars($_POST["services"]) : ""; 
-    
+    $selectedServices = isset($_POST["select-services"]) ? htmlspecialchars($_POST["select-services"]) : "";
+
     // Database connection parameters
     $serverName = 'localhost';  
-    $dbName = 'project';    
+    $dbName = 'memoirsstudio';    
     $username = 'root';
     $password = '';
 
@@ -23,9 +23,8 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     }
 
     // Prepare the SQL statement
-    $sql = "INSERT INTO `booking` (`Name`, `Address`, `Contact Number`,`Date of Reservation`, `Time of Reservation`, `Select Services`)
+    $sql = "INSERT INTO `booking` (`Name`, `Address`, `Contact Number`, `Date of Reservation`, `Time of Reservation`, `Select Services`)
         VALUES (?, ?, ?, ?, ?, ?)";
-
 
     // Create a prepared statement
     $stmt = $connection->prepare($sql);
@@ -35,7 +34,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     }
 
     // Bind parameters
-    $stmt->bind_param("ssisss", $name, $address, $contact, $date, $time, $selectedServices);
+    $stmt->bind_param("ssssss", $name, $address, $contact, $date, $time, $selectedServices);
 
     // Execute the prepared statement
     if ($stmt->execute()) {
